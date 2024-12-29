@@ -46,7 +46,7 @@ const SearchForm = () => {
     setSearch(true);
   
     try {
-      const response = await axios.post("https://train-ticket-server.vercel.app/api/trains/search-trains", {
+      const response = await axios.post("https://train-ticket-rmn1.onrender.com/api/trains/search-trains", {
         fromStation: fromStation.station_code,
         toStation: toStation.station_code,
       }, {
