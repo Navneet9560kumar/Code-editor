@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.get("/" , (req , res) => {
 res.send("Hello Ji ......");
-}
+});
 
 app.use("/api/trains", TrainRoutes);
 
