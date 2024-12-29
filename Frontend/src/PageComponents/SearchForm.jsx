@@ -51,6 +51,7 @@ const SearchForm = () => {
         toStation: toStation.station_code,
       }, {
        withCredentials: true,
+      }
      );
       if(response.data.result){
       setLoading(false);
