@@ -10,7 +10,7 @@ const SearchForm = () => {
   const {setTrainResults , fromStation , toStation , setLoading , setSearch , mode , date , setError} = useContext(context)
 
   const handleSearch = async () => {
-    // Reset errors
+
     setError("");
   
     if (!mode) {
@@ -49,7 +49,9 @@ const SearchForm = () => {
       const response = await axios.post("https://train-ticket-server.vercel.app/api/trains/search-trains", {
         fromStation: fromStation.station_code,
         toStation: toStation.station_code,
-      });
+      }, {
+       withCredentials: true,
+     );
       if(response.data.result){
       setLoading(false);
       setTrainResults(response.data.result);
