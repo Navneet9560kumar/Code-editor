@@ -14,6 +14,7 @@ const PORT = process.env.PORT || 5100;
 const corsOptions = {
   origin: ['https://train-ticket-rvn.vercel.app'], 
   methods: ['GET', 'POST'], 
+  credentials: true,
 };
 
 app.use(cors(corsOptions)); 
