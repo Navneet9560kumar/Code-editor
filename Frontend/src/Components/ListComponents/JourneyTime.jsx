@@ -1,7 +1,4 @@
-
-
-const JourneyTime = ({ train , toStation, fromStation }) => {
-
+const JourneyTime = ({ train, toStation, fromStation }) => {
   const calculateJourneyTime = () => {
     let fTime = null;
     let tTime = null;
@@ -14,7 +11,7 @@ const JourneyTime = ({ train , toStation, fromStation }) => {
       tTime = train.terminating_station.arrival_time;
     }
 
-    if (fTime == null || tTime == null) {
+    if (!fTime || !tTime) {
       train.intermediate_stations.forEach((stop) => {
         if (stop.code === fromStation.station_code) {
           fTime = stop.departure_time;
@@ -25,17 +22,17 @@ const JourneyTime = ({ train , toStation, fromStation }) => {
       });
     }
 
-    if (fTime == null || tTime == null) {
+    if (!fTime || !tTime) {
       return 'Invalid Stations';
     }
 
-    const departureTime = new Date(`1970-01-01T${fTime}`);
-    const arrivalTime = new Date(`1970-01-01T${tTime}`);
+    const departureTime = new Date(`1970-01-01T${fTime}Z`); 
+    const arrivalTime = new Date(`1970-01-01T${tTime}Z`);
 
     let timeDiff = arrivalTime - departureTime;
 
     if (timeDiff < 0) {
-      timeDiff += 24 * 60 * 60 * 1000;
+      timeDiff += 24 * 60 * 60 * 1000;  
     }
 
     const hours = Math.floor(timeDiff / (1000 * 60 * 60));

@@ -17,15 +17,15 @@ const ResultsList = () => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
-      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Availble Trains
+    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 md:p-8">
+      <h1 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">
+        Available Trains
       </h1>
 
-      <div className="flex justify-center space-x-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
         <button
           onClick={() => handleTabChange("direct")}
-          className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+          className={`px-4 py-2 sm:px-6 rounded-lg font-semibold transition-colors ${
             activeTab === "direct"
               ? "bg-blue-600 text-white"
               : "bg-gray-200 text-gray-800 hover:bg-gray-300"
@@ -35,7 +35,7 @@ const ResultsList = () => {
         </button>
         <button
           onClick={() => handleTabChange("multi")}
-          className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+          className={`px-4 py-2 sm:px-6 rounded-lg font-semibold transition-colors ${
             activeTab === "multi"
               ? "bg-blue-600 text-white"
               : "bg-gray-200 text-gray-800 hover:bg-gray-300"
@@ -45,8 +45,7 @@ const ResultsList = () => {
         </button>
       </div>
 
-      {/* Results Content */}
-      <div className="container mx-auto">
+      <div className="container mx-auto w-full sm:max-w-lg lg:max-w-2xl">
         {activeTab === "direct" ? (
           <div className="space-y-4">
             {directTrains.length > 0 ? (

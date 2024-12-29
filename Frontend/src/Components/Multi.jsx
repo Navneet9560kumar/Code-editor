@@ -1,16 +1,13 @@
-import React, { useState , useContext } from "react";
-import List from "./List"; 
-import context from '../Context/context'
+import React, { useState, useContext, useMemo } from "react";
+import List from "./List";
+import context from "../Context/context";
 
 const Multi = ({ journey }) => {
   const [expandedSection, setExpandedSection] = useState(null);
-  const [selectedTrain, setSelectedTrain] = useState(null);
-
-  const { toStation, fromStation } = useContext(context)
+  const { toStation, fromStation } = useContext(context);
 
   const toggleSection = (index) => {
     setExpandedSection(expandedSection === index ? null : index);
-    setSelectedTrain(null);
   };
 
   return (
@@ -20,47 +17,54 @@ const Multi = ({ journey }) => {
           <p className="text-md font-semibold text-gray-800">
             {`${fromStation.station_name} (${fromStation.station_code}) → ${toStation.station_name} (${toStation.station_code})`}
           </p>
-          <h3 className="text-2xl text-gray-600">Journey Details</h3>
+          <h3 className="text-xl md:text-2xl text-gray-600">Journey Details</h3>
           <p className="text-sm text-gray-600">{`Total Sections: ${journey.length}`}</p>
         </div>
       </div>
 
       <div className="mt-4 space-y-6">
         {journey.map((section, sectionIndex) => {
-
-          const fr = { station_code: section.from };
-          const t = { station_code: section.to};
-          
+          // Memoize station objects for performance
+          const fromStationMemo = useMemo(
+            () => ({ station_code: section.from }),
+            [section.from]
+          );
+          const toStationMemo = useMemo(
+            () => ({ station_code: section.to }),
+            [section.to]
+          );
 
           return (
             <div key={sectionIndex} className="border-t pt-4">
               <div className="flex justify-between items-center">
                 <p className="text-lg font-semibold text-gray-700">
-                  Part {sectionIndex + 1}: {`${fr.station_code} → ${t.station_code}`}
+                  Part {sectionIndex + 1}: {`${fromStationMemo.station_code} → ${toStationMemo.station_code}`}
                 </p>
                 <button
                   onClick={() => toggleSection(sectionIndex)}
+                  aria-expanded={expandedSection === sectionIndex}
+                  aria-controls={`section-${sectionIndex}`}
                   className="text-blue-500 hover:text-blue-700 font-medium"
                 >
                   {expandedSection === sectionIndex ? "Hide Trains" : "Show Trains"}
                 </button>
               </div>
-             
+
               {expandedSection === sectionIndex && (
-                <div className="mt-4 space-y-4">
-                  
+                <div
+                  id={`section-${sectionIndex}`}
+                  className="mt-4 space-y-4"
+                >
                   {section.trains.map((train, trainIndex) => (
-                    
                     <List
                       key={trainIndex}
                       train={train}
-                      fromStation={fr}  
-                      toStation={t}     
+                      fromStation={fromStationMemo}
+                      toStation={toStationMemo}
                     />
                   ))}
                 </div>
               )}
-              
             </div>
           );
         })}

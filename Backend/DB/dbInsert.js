@@ -68,5 +68,5 @@ const insertTrainNames = async () => {
   }
 };
 
-insertData();
+// insertData();
 // insertTrainNames()

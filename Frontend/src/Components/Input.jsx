@@ -2,13 +2,7 @@ import { useContext, useState } from "react";
 import Trains from "../assets/Trains/Trains";
 import context from "../Context/context";
 
-const Input = ({
-  placeholder,
-  label,
-  round,
-  type,
-  options = [],
-}) => {
+const Input = ({ placeholder, label, round, type, options = [] }) => {
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -61,7 +55,7 @@ const Input = ({
 
   return (
     <div
-      className={`relative w-64 bg-white ${roundClasses} shadow-sm focus-within:outline-none focus-within:ring-1 focus-within:border focus-within:shadow-[inset_0_0_0_2px_#1d4ed8]`}
+      className={`relative w-full sm:w-64 bg-white ${roundClasses} shadow-sm focus-within:outline-none focus-within:ring-1 focus-within:ring-blue-500`}
     >
       <div className="py-2 px-4">
         <label htmlFor={label} className="text-gray-600 block mb-1">
@@ -87,7 +81,7 @@ const Input = ({
           <>
             <input
               id={label}
-              className={`w-full rounded-md text-gray-600 focus:outline-none`}
+              className="w-full rounded-md text-gray-600 focus:outline-none"
               type={type}
               value={inputValue}
               onChange={handleInputChange}
