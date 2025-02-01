@@ -3,7 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { FiSmartphone, FiLayers, FiCode, FiUsers, FiDatabase } from "react-icons/fi";
+import { FiSmartphone, FiLayers, FiCode, FiUsers, FiDatabase, FiGlobe } from "react-icons/fi";
+
 
 const AppDevelopment = () => {
   const navigate = useNavigate();
