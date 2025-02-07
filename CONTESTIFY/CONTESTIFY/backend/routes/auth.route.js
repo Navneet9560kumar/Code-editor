@@ -8,9 +8,14 @@ import {
 	resetPassword,
 	checkAuth,
 } from "../controllers/auth.controlles.js";
-import { verifyToken } from "../middleware/verifyToken.js";
+import { verifyToken } from "../middlewares/verifyToken .js";
 
 const router = express.Router();
+
+router.get("/test", (req, res) => {   // ✅ Test route added
+	res.json({ message: "Auth route is working!" });
+});
+
 
 router.get("/check-auth", verifyToken, checkAuth);
 
