@@ -25,15 +25,21 @@ const SearchForm = () => {
       return;
     }
     if (mode === "Bus Only") {
-      setError("Working on Bus Services !! Will Update Soon. Try Other Services");
+      setError(
+        "Working on Bus Services !! Will Update Soon. Try Other Services"
+      );
       return;
     }
     if (mode === "Flight Only") {
-      setError("Working on Flight Services !! Will Update Soon. Try Other Services");
+      setError(
+        "Working on Flight Services !! Will Update Soon. Try Other Services"
+      );
       return;
     }
     if (mode === "Mixed Mode") {
-      setError("Working on Mixed Services !! Will Update Soon. Try Other Services");
+      setError(
+        "Working on Mixed Services !! Will Update Soon. Try Other Services"
+      );
       return;
     }
     if (!fromStation.station_code) {
@@ -54,7 +60,7 @@ const SearchForm = () => {
 
     try {
       const response = await axios.post(
-        "https://train-ticket-rmn1.onrender.com/api/trains/search-trains",
+        "http://localhost:2100/api/trains/search-trains",
         {
           fromStation: fromStation.station_code,
           toStation: toStation.station_code,
@@ -69,7 +75,9 @@ const SearchForm = () => {
       }
     } catch (error) {
       setLoading(false);
-      setError(`Error fetching train data. Please try again later. \n Error : ${error}`);
+      setError(
+        `Error fetching train data. Please try again later. \n Error : ${error}`
+      );
       console.error("Error fetching train data:", error);
     }
   };
