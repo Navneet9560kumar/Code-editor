@@ -28,8 +28,7 @@ const Loader = () => {
       <p className="text-center text-lg sm:text-xl md:text-2xl font-semibold text-blue-700">
         <span className="animate-pulse">
           Please wait! We’re finding the best options for you...
-        </span> <br />
-        <span className="animate-pulse">It can take upto 5 minutes..</span>
+        </span>
       </p>
 
       <div className="w-16 h-1 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"></div>

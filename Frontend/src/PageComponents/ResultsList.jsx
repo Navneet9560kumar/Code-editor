@@ -2,12 +2,13 @@ import React, { useState, useContext } from "react";
 import List from "../Components/List";
 import Multi from "../Components/Multi";
 import context from "../Context/context";
+import MultiLoader from "./MultiLoader";
 
 const ResultsList = () => {
-  const { trainResults, fromStation, toStation } = useContext(context);
+  const { direct, multi, fromStation, multiLoading, toStation } = useContext(context);
 
-  const directTrains = trainResults?.directTrains || [];
-  const multiTrainConnections = trainResults?.multiTrainConnections || [];
+  const directTrains = direct || [];
+  const multiTrainConnections = multi || [];
 
   const [activeTab, setActiveTab] = useState("direct");
   const [selectedJourney, setSelectedJourney] = useState(null);
@@ -69,6 +70,7 @@ const ResultsList = () => {
             )}
           </div>
         ) : (
+          <div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {multiTrainConnections.length > 0 ? (
               multiTrainConnections.map((journey, index) => (
@@ -80,12 +82,21 @@ const ResultsList = () => {
                   <Multi journey={journey} showButton={false} center={false} />
                 </div>
               ))
-            ) : (
-              <p className="text-center text-gray-500 col-span-full">
-                No multi-train journeys available.
-              </p>
-            )}
+            ) : ( 
+                   multiLoading === true ?  (
+                     null
+                   ) : (
+                         <p className="text-center text-gray-500 col-span-full">
+                             No multi-train journeys available.
+                        </p>
+                        )
+                  
+                )
+            }
+          </div >
+          {multiLoading && <MultiLoader /> }
           </div>
+          
         )}
       </div>
 

@@ -7,7 +7,14 @@ const Input = ({ placeholder, label, round, type, options = [] }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { setFromStation, setToStation, setMode, setDate } = useContext(context);
+  const {
+    setFromStation,
+    setToStation,
+    setMode,
+    setDate,
+    setSearch,
+    setIsSearching,
+  } = useContext(context);
 
   let roundClasses = "";
   if (round === "left") {
@@ -19,6 +26,8 @@ const Input = ({ placeholder, label, round, type, options = [] }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
+    setSearch(false);
+    setIsSearching(false);
 
     if (label === "Mode") setMode(value);
     if (label === "Date") setDate(value);

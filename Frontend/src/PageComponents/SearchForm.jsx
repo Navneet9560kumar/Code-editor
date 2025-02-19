@@ -1,121 +1,89 @@
 import { useContext } from "react";
 import Input from "../Components/Input";
-import axios from "axios";
 import context from "../Context/context";
+import { toast } from "react-toastify";
 
 const SearchForm = () => {
   const modeOptions = ["Train Only", "Bus Only", "Flight Only", "Mixed Mode"];
-
   const {
-    setTrainResults,
     fromStation,
     toStation,
+    setDirect,
+    setMulti,
     setLoading,
+    setMultiLoading,
     setSearch,
     mode,
     date,
     setError,
+    isSearching , 
+    setIsSearching
   } = useContext(context);
+
 
   const handleSearch = async () => {
     setError("");
 
-    if (!mode) {
-      setError("Please select a mode.");
-      return;
+    if (!mode) return setError("Please select a mode.");
+    if (["Bus Only", "Flight Only", "Mixed Mode"].includes(mode)) {
+      return setError(`${mode} services are under development. Try other services.`);
     }
-    if (mode === "Bus Only") {
-      setError(
-        "Working on Bus Services !! Will Update Soon. Try Other Services"
-      );
-      return;
-    }
-    if (mode === "Flight Only") {
-      setError(
-        "Working on Flight Services !! Will Update Soon. Try Other Services"
-      );
-      return;
-    }
-    if (mode === "Mixed Mode") {
-      setError(
-        "Working on Mixed Services !! Will Update Soon. Try Other Services"
-      );
-      return;
-    }
-    if (!fromStation.station_code) {
-      setError("Please select a source station.");
-      return;
-    }
-    if (!toStation.station_code) {
-      setError("Please select a destination station.");
-      return;
-    }
-    if (!date) {
-      setError("Please select a date.");
-      return;
-    }
+    if (!fromStation.station_code) return setError("Please select a source station.");
+    if (!toStation.station_code) return setError("Please select a destination station.");
+    if (!date) return setError("Please select a date.");
 
+   
+    setIsSearching(true);
     setLoading(true);
     setSearch(true);
+    setMultiLoading(true);
+    setDirect([]);
+    setMulti([]);
+    const eventSource = new EventSource(
+      `https://train-ticket-rmn1.onrender.com/api/trains/search-trains?fromStation=${fromStation.station_code}&toStation=${toStation.station_code}`
+    );
 
-    try {
-      const response = await axios.post(
-        "http://localhost:2100/api/trains/search-trains",
-        {
-          fromStation: fromStation.station_code,
-          toStation: toStation.station_code,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.data.result) {
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === "directTrains") {
+        setDirect(data.trains);
+        toast.success("Direct Trains Fetched Successfully!!!");
         setLoading(false);
-        setTrainResults(response.data.result);
+      } else if (data.type === "multi-train") {
+        setMulti((prev) => [...prev, data.trains]);
+      } else if (data.type === "done") {
+        setIsSearching(false);
+        setMultiLoading(false);
+        toast.success("All Trains Fetched Successfully!!! 🎉🎉");
+
+        eventSource.close();
       }
-    } catch (error) {
-      setLoading(false);
-      setError(
-        `Error fetching train data. Please try again later. \n Error : ${error}`
-      );
+    };
+
+    eventSource.onerror = (error) => {
+      setError("Error fetching train data. Please try again later.");
       console.error("Error fetching train data:", error);
-    }
+      setIsSearching(false);
+      setIsSearching(false);
+      setLoading(false);
+      setSearch(false);
+      eventSource.close();
+    };
   };
 
   return (
     <div className="flex flex-col sm:flex-row sm:gap-4 gap-2 items-stretch">
-      <Input
-        placeholder={"Train Only"}
-        label={"Mode"}
-        type={"select"}
-        options={modeOptions}
-        round={"left"}
-        className="flex-1"
-      />
-      <Input
-        placeholder={"City, place, location"}
-        type={"text"}
-        label={"From"}
-        className="flex-1"
-      />
-      <Input
-        placeholder={"City, place, location"}
-        type={"text"}
-        label={"To"}
-        className="flex-1"
-      />
-      <Input
-        placeholder={"Select Date"}
-        label={"Date"}
-        type={"date"}
-        round={"right"}
-        className="flex-1"
-      />
+      <Input placeholder={"Train Only"} label={"Mode"} type={"select"} options={modeOptions} round={"left"} className="flex-1" />
+      <Input placeholder={"City, place, location"} type={"text"} label={"From"} className="flex-1" />
+      <Input placeholder={"City, place, location"} type={"text"} label={"To"} className="flex-1" />
+      <Input placeholder={"Select Date"} label={"Date"} type={"date"} round={"right"} className="flex-1" />
       <button
         onClick={handleSearch}
-        className="bg-blue-700 text-white rounded-lg py-2 px-4 hover:bg-blue-800 flex-1 sm:flex-none"
+        disabled={isSearching}
+        className={`bg-blue-700 text-white rounded-lg py-2 px-4 hover:bg-blue-800 flex-1 sm:flex-none ${isSearching ? "opacity-50 cursor-not-allowed" : ""}`}
       >
-        Search
+        {isSearching ? "Searching..." : "Search"}
       </button>
     </div>
   );

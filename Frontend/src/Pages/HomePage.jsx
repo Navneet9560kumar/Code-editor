@@ -7,18 +7,14 @@ import context from "../Context/context";
 import Loader from "../Components/Loader";
 
 const HomePage = () => {
-  const { trainResults, loading, search, error } = useContext(context);
+  const { direct , multi, loading, search, error , multiLoading } = useContext(context);
 
   return (
     <div className="bg-gradient-to-b from-[#00172E] to-[#05203C] min-h-screen text-white">
       <div className="mb-5 px-4 sm:px-6 lg:px-36">
         <div className="flex flex-col md:flex-row items-center md:justify-between py-6 md:py-12">
           <Link to="/" className="mb-4 md:mb-0">
-            <img
-              src="logo.webp"
-              alt="Logo"
-              className="h-36 w-24 rounded-full sm:h-20"
-            />
+            <img src="vite.svg" alt="Logo" className="h-10 sm:h-12" />
           </Link>
           <div className="flex flex-row items-center space-x-4">
             <p className="cursor-pointer text-white hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
@@ -29,9 +25,7 @@ const HomePage = () => {
             </p>
             <p className="cursor-pointer text-white flex items-center space-x-2 hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
               <FaUser size={20} />
-              <span className="text-sm sm:text-[14px] font-semibold">
-                Log in
-              </span>
+              <span className="text-sm sm:text-[14px] font-semibold">Log in</span>
             </p>
             <p className="cursor-pointer text-white hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
               <FaBars size={20} />
@@ -62,15 +56,15 @@ const HomePage = () => {
         </div>
       )}
 
-      <div className="flex flex-col justify-center items-center w-full h-screen px-4 sm:px-8 ">
+      <div className="flex flex-col justify-center items-center w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[90vh] px-4 sm:px-8 ">
         {!search ? (
           <div
-            className="relative h-full w-full flex flex-col items-center justify-center"
-            style={{
-              backgroundImage: "url('welcome.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+          className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] xl:h-[90vh] flex flex-col items-center justify-center rounded-lg"
+          style={{
+            backgroundImage: "url('Train2.cms')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
           >
             <div className="bg-black/50 absolute inset-0"></div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-white z-10 relative">
@@ -84,10 +78,10 @@ const HomePage = () => {
           <div className="p-6 md:p-10 text-center bg-white text-gray-900 shadow-md rounded-lg w-full flex items-center justify-center">
             <Loader />
           </div>
-        ) : trainResults &&
-          (trainResults.directTrains.length > 0 ||
-            trainResults.multiTrainConnections.length > 0) ? (
-          <div className="p-6 md:p-10 bg-white text-gray-900 shadow-md rounded-lg w-full max-h-screen overflow-y-auto">
+        ) : (direct || multi || multiLoading) &&
+          (direct.length > 0 ||
+            multi.length > 0 || multiLoading) ? (
+          <div className="p-6 md:p-10 bg-gray-300 text-gray-900 shadow-md rounded-lg w-full max-h-screen overflow-y-auto">
             <ResultsList />
           </div>
         ) : (
