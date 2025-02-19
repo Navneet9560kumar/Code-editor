@@ -1,0 +1,12 @@
+{
+  "name": "smarttrainsearch",
+  "version": "1.0.0",
+  "description": "The **Train Search Platform** is a web-based application that allows users to search for train availability, including direct and multi-train routes. It simplifies route planning by automatically finding the best options, displaying available seats, and estimating travel time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
