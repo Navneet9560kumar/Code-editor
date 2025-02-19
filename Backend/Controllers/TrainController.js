@@ -26,25 +26,18 @@ async function findDirectConnections(fromStation, toStation) {
           ]
         }
       ]
-    }).lean().cursor(); // Cursor for efficient loading
+    }).lean().cursor();
 
     let filteredTrains = [];
 
-    for await (const train of cursor) { // Iterate through results
-      let fromIndex = null;
-      let toIndex = null;
+    for await (const train of cursor) {
+      let fromIndex = train.intermediate_stations.findIndex(station => station.code === fromStation);
+      let toIndex = train.intermediate_stations.findIndex(station => station.code === toStation);
 
       if (train.starting_station.code === fromStation && train.terminating_station.code === toStation) {
         filteredTrains.push(train);
-      } else {
-        train.intermediate_stations.forEach((station, index) => {
-          if (station.code === fromStation) fromIndex = index;
-          if (station.code === toStation) toIndex = index;
-        });
-
-        if (fromIndex !== null && toIndex !== null && fromIndex < toIndex) {
-          filteredTrains.push(train);
-        }
+      } else if (fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex) {
+        filteredTrains.push(train);
       }
     }
 
@@ -55,7 +48,7 @@ async function findDirectConnections(fromStation, toStation) {
   }
 }
 
-async function findMultiTrainConnections(fromStation, toStation) {
+async function findMultiTrainConnections(fromStation, toStation , res) {
   try {
     const queue = [[fromStation]];
     const visited = new Set();
@@ -113,11 +106,47 @@ async function findMultiTrainConnections(fromStation, toStation) {
           break;
         }
 
-        journey.push({ from: current, to: next, trains });
+        journey.push({ from: current, to: next, trains});
       }
 
       if (valid) {
-        filteredTrainPaths.push(journey);
+        for (let i = 0; i < journey.length - 1; i++) {
+          const currentSegment = journey[i];
+          const nextSegment = journey[i + 1];
+
+          const validConnections = currentSegment.trains.filter((trainA) => {
+            const arrivalTimeAtIntermediate = trainA.intermediate_stations.find(
+              (station) => station.code === currentSegment.to
+            )?.arrival_time;
+
+            if (!arrivalTimeAtIntermediate) return false;
+
+            return nextSegment.trains.some((trainB) => {
+              const departureTimeFromIntermediate = trainB.intermediate_stations.find(
+                (station) => station.code === nextSegment.from
+              )?.departure_time;
+
+              if (!departureTimeFromIntermediate) return false;
+
+              return (
+                new Date(`1970-01-01T${departureTimeFromIntermediate}`) >
+                new Date(`1970-01-01T${arrivalTimeAtIntermediate}`) 
+              );
+            });
+          });
+
+          if (validConnections.length === 0) {
+            valid = false;
+            break;
+          }
+
+          journey[i].trains = validConnections;
+        }
+
+        if (valid) {
+          res.write(`data: ${JSON.stringify({ type: "multi-train", trains: journey })}\n\n`);
+          filteredTrainPaths.push(journey);
+        }
       }
     }
 
@@ -128,29 +157,31 @@ async function findMultiTrainConnections(fromStation, toStation) {
   }
 }
 
+
 const searchTrains = async (req, res) => {
-  const { fromStation, toStation } = req.body;
+  const { fromStation, toStation } = req.query; 
 
   if (!fromStation || !toStation) {
     return res.status(400).json({ success: false, message: "Source and Destination are required" });
   }
 
-  try {
-    const [directTrains, multiTrainConnections] = await Promise.all([
-      findDirectConnections(fromStation, toStation),
-      findMultiTrainConnections(fromStation, toStation)
-    ]);
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
-    return res.status(200).json({
-      success: true,
-      result: {
-        directTrains,
-        multiTrainConnections
-      }
-    });
+  try {
+    const directTrains = await findDirectConnections(fromStation, toStation);
+    
+    res.write(`data: ${JSON.stringify({ type: "directTrains", trains: directTrains })}\n\n`);
+
+    await findMultiTrainConnections(fromStation, toStation, res);
+
+    res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
+    res.end();
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: error.message });
+    res.write(`data: ${JSON.stringify({ type: "error", message: error.message })}\n\n`);
+    res.end();
   }
 };
 

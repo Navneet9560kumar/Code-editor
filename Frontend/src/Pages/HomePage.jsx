@@ -14,7 +14,11 @@ const HomePage = () => {
       <div className="mb-5 px-4 sm:px-6 lg:px-36">
         <div className="flex flex-col md:flex-row items-center md:justify-between py-6 md:py-12">
           <Link to="/" className="mb-4 md:mb-0">
-            <img src="vite.svg" alt="Logo" className="h-10 sm:h-12" />
+            <img
+              src="logo.webp"
+              alt="Logo"
+              className="h-36 w-24 rounded-full sm:h-20"
+            />
           </Link>
           <div className="flex flex-row items-center space-x-4">
             <p className="cursor-pointer text-white hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
@@ -25,7 +29,9 @@ const HomePage = () => {
             </p>
             <p className="cursor-pointer text-white flex items-center space-x-2 hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
               <FaUser size={20} />
-              <span className="text-sm sm:text-[14px] font-semibold">Log in</span>
+              <span className="text-sm sm:text-[14px] font-semibold">
+                Log in
+              </span>
             </p>
             <p className="cursor-pointer text-white hover:bg-gray-400/20 px-3 py-2 rounded transition-all duration-300">
               <FaBars size={20} />
