@@ -1,10 +1,11 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors"; // Allow frontend requests
-
+import router from "./routes/auth.route.js";
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('/api/v1/auth',router);
 
 const JUDGE0_API = "http://localhost:2358"; 
 
@@ -18,6 +19,12 @@ app.post("/api/submit-code", async (req, res) => {
       cpu_time_limit,
       memory_limit,
     } = req.body;
+
+
+
+    if (!language_id || !source_code) {
+      return res.status(400).json({ error: "language_id and source_code are required" });
+    }
 
     // Send Code to Judge0
     const submission = await axios.post(`${JUDGE0_API}/submissions`, {
